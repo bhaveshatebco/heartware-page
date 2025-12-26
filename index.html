@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ebco Heartware | Rewards Program</title>
+    <style>
+        :root {
+            --primary: #1d4880;
+            --primary-dark: #173a67;
+            --secondary: #1e293b;
+            --text-main: #0f172a;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* --- SECTION 1: HERO BANNER CAROUSEL --- */
+        .hero-carousel {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .hero-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out, transform 10s linear;
+            z-index: 1;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+            z-index: 2;
+            transform: scale(1.15);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8));
+            z-index: 3;
+        }
+
+        .header {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            padding: 30px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 4;
+            text-align: center;
+            max-width: 1050px;
+            padding: 20px;
+        }
+
+        .btn-main {
+            background: var(--primary);
+            color: white;
+            padding: 16px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-scanqr {
+            display: flex;
+            align-items: center;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            background-color: var(--primary);
+            /* background: var(--primary);
+            color: white;
+            padding: 16px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer; */
+        }
+
+        .about-paragraphs {
+            margin: 20px 0;
+            font-size: 1.1rem;
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        .about-paragraphs span {
+            display: block;
+            padding: 0.5rem 0;
+        }
+
+        /* --- SECTION 2: HOW TO JOIN --- */
+        .join-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .join-card {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .join-card:hover {
+            transform: translateY(-12px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .join-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        /* --- SECTION 3: GALLERY & LIGHTBOX --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 15px;
+            position: relative;
+            height: 225px;
+            background: #eee;
+        }
+
+        .gallery-item img,
+        .gallery-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Container for the Play Icon */
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            /* Translucent white */
+            backdrop-filter: blur(5px);
+            /* Frosty glass effect */
+            -webkit-backdrop-filter: blur(5px);
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 5;
+        }
+
+        /* The Play Triangle (CSS-only triangle) */
+        .play-triangle {
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 15px solid white;
+            /* The triangle color */
+            margin-left: 5px;
+            /* Centers the triangle visually in the circle */
+        }
+
+        /* Hover Effect: Button grows and glows */
+        .gallery-item:hover .play-overlay {
+            background: var(--primary);
+            /* Turns red on hover */
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 0 20px rgba(225, 29, 72, 0.5);
+            border-color: transparent;
+        }
+
+
+        /* Full Screen Lightbox */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox-media-box {
+            position: relative;
+            width: 80%;
+            height: 70vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox-media-box img,
+        .lightbox-media-box video {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: white;
+            font-size: 50px;
+            cursor: pointer;
+            z-index: 1100;
+        }
+
+        .lb-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15%;
+            border: none;
+        }
+
+        .lb-prev {
+            left: 20px;
+        }
+
+        .lb-next {
+            right: 20px;
+        }
+
+        /* --- UTILS --- */
+        .section {
+            padding: 100px 8%;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: 1s ease-out;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .earn-table {
+            border: 1px solid white;
+            border-collapse: collapse;
+            width: 100%;
+            text-align: center;
+            margin-top: 2rem;
+            backdrop-filter: blur(5px);
+        }
+
+        table th,
+        td {
+            border: 1px solid white;
+            padding: 0.5rem;
+
+        }
+
+        @keyframes cardClick {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(0.92);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .click-anim {
+            animation: cardClick 0.4s ease;
+        }
+
+        /* Container must be relative so the menu knows where to sit */
+        .nav-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* The Menu - Forced to stack vertically */
+        .dropdown-content {
+            display: none;
+            /* Hidden by default */
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #ffffff;
+            /* Solid white background */
+            min-width: 240px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            margin-top: 10px;
+            padding: 8px 0;
+            z-index: 9999;
+            /* Ensure it stays on top of everything */
+            border: 1px solid #ddd;
+            flex-direction: column;
+            /* Forces vertical stacking */
+        }
+
+        /* This class is added by JS on click */
+        .dropdown-content.show {
+            display: flex;
+        }
+
+        /* Style the links inside */
+        .dropdown-content a {
+            color: #333 !important;
+            /* Force dark text */
+            padding: 12px 20px;
+            text-decoration: none !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+            text-align: left;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f5f9;
+            color: var(--primary) !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="hero-carousel">
+        <nav class="header">
+            <div
+                style="display: flex; align-items: center; font-size: 24px; font-weight: 900; color: white; letter-spacing: -1px;">
+                <img style="width: 15rem; height: auto; padding-top: 10px;"
+                    src="media/images/logo/HEARTWARE FINAL LOGO.png" alt="">
+            </div>
+            <!-- <a href="https://slurl.in/ebco_app_link" class="btn-main" style="padding: 10px 25px; font-size: 14px;">App
+                Store</a> -->
+            <div class="nav-dropdown">
+                <button class="btn-main" id="appMenuBtn" onclick="toggleAppMenu(event)">
+                    Get the App ▾
+                </button>
+                <div class="dropdown-content" id="appDropdown">
+                    <a href="#">App Store</a>
+                    <a href="#">Play Store</a>
+                    <a href="javascript:void(0)" onclick="showQR()">Scan to Download</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1553095066-5014bd773f2d?q=80&w=1920&auto=format&fit=crop');"></div> -->
+        <div class="hero-slide active"
+            style="background-image: url('https://images.unsplash.com/photo-1504148455328-c376907d081c?q=80&w=2000');">
+        </div>
+        <div class="hero-slide"
+            style="background-image: url('https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=2000');">
+        </div>
+        <!-- <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=1920&auto=format&fit=crop');"></div>
+        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1920&auto=format&fit=crop');"></div> -->
+
+        <div class="hero-overlay"></div>
+
+        <div class="banner-content">
+            <h1 style="font-size: clamp(2.5rem, 6vw, 4.5rem); margin-bottom: 20px; line-height: 1.1;">A Reward Program,
+                <br>
+                <span style="color:#ed7424">Designed for <br>Contractors & Carpenters.</span>
+            </h1>
+            <p style="font-size: 1.3rem; margin-bottom: 35px; color: rgba(255,255,255,0.9);">SCAN . EARN . REDEEM .
+                REPEAT</p>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <!-- <a href="https://slurl.in/ebco_app_link" class="btn-main">Install Mobile App</a> -->
+                <!-- <div class="btn-scanqr">
+                    <span style="padding: 0 1rem 0 0; font-size: 1.25rem;">Scan to <br>Download</span>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=https://slurl.in/ebco_app_link"
+                        alt="QR">
+                </div> -->
+                <!-- <div style="background: white; padding: 8px; border-radius: 12px; display: flex; align-items: center;"> -->
+
+                <!-- <span
+                        style="color:black; font-size: 10px; font-weight: bold; width: 60px; margin-left: 8px; line-height: 1.2;">SCAN
+                        TO DOWNLOAD</span> -->
+                <!-- </div> -->
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 60px; align-items: center;">
+            <div class="reveal">
+                <span style="color:var(--primary); font-weight: 800; text-transform: uppercase;">Overview</span>
+                <h2 style="font-size: 2.8rem; margin-top: 10px;">ABOUT THE PROGRAM</h2>
+                <p class="about-paragraphs">
+                    <span>Ebco Heartware is a Reward Program exclusively designed for contractors & carpenters
+                        associated with Ebco.</span>
+                    <span>Contractors & carpenters can earn points by scanning QR codes available on a wide range of
+                        products. The accumulated points can be redeemed for exciting rewards.</span>
+                    <span>This program acknowledges the valuable role contractors & carpenters play in promoting and
+                        using Ebco products at project sites and rewards them for their continued engagement.</span>
+                </p>
+            </div>
+            <div class="reveal"
+                style="background: var(--secondary); color: white; padding: 45px; border-radius: 30px; position: relative; overflow: hidden;">
+                <h3 style="margin-bottom: 15px;">EARN AS YOU WORK</h3>
+                <p style="padding: 0.5rem 0;">Whenever you purchase select Ebco products, simply Scan the QR code
+                    available on them using the App.</p>
+                <p style="padding: 0.5rem 0;">Each scan earns you points automatically, turning your daily work into
+                    opportunities for rewards.</p>
+                <!-- <p style="padding: 0.5rem 0;">SIGN UP : 150 Welcome Points <br>REFERRAL BONUS : 200 Points <br>PRODUCT PURCHASE : As per QR Value</p> -->
+                <table class="earn-table">
+                    <thead>
+                        <th>Sign Up</th>
+                        <th>Referral Bonus</th>
+                        <th>Product Purchase</th>
+                    </thead>
+                    <tbody>
+                        <td>150 Welcome Points</td>
+                        <td>200 Points</td>
+                        <td>As per QR Value</td>
+                    </tbody>
+                </table>
+                <!-- <div style="margin-top: 30px; font-size: 3rem; opacity: 0.1; position: absolute; bottom: -10px; right: 20px;">EBCO</div> -->
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background-color: #fff;">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 10px;">HOW TO JOIN</h2>
+        <p style="text-align: center; color: var(--text-light); margin-bottom: 50px;">You can join easily via:</p>
+        <div class="join-grid">
+            <div class="join-card reveal"> <!-- onclick="animateCard(this)"> -->
+                <h3>Self-Registration</h3>
+                <p style="padding: 0.5rem 0;">Download our Ebco Heartware App from the Google Play Store or Apple App
+                    Store.</p>
+                <p style="padding: 0.5rem 0;">Follow the simple on-screen steps to register yourself.</p>
+            </div>
+            <div class="join-card reveal"> <!-- onclick="animateCard(this)"> -->
+                <h3>Referral by Registered Users</h3>
+                <p style="padding: 0.5rem 0;">Already know someone who’s a registered member of our Reward Program? </p>
+                <p style="padding: 0.5rem 0;">They can refer you directly through the App.</p>
+
+            </div>
+            <div class="join-card reveal"> <!-- onclick="animateCard(this)"> -->
+                <h3>Registration via Sales Officer</h3>
+                <p style="padding: 0.5rem 0;">Our on-ground sales officers are always ready to assist. Simply connect
+                    with a sales officer in your area, they will help you fill out the form, upload the necessary
+                    documents, and complete your registration seamlessly.</p>
+            </div>
+            <div class="join-card reveal"> <!-- onclick="animateCard(this)"> -->
+                <h3>Contact Our Helpdesk</h3>
+                <p style="padding: 0.5rem 0;">Having trouble registering? </p>
+                <p style="padding: 0.5rem 0;">Reach out to our dedicated support team through the helpdesk</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: #f1f5f9;">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 50px;">Heartware Highlights</h2>
+        <div class="gallery-grid" id="gallery-container">
+        </div>
+    </section>
+
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <button class="lb-nav lb-prev" onclick="changeLightbox(-1)">❮</button>
+        <div class="lightbox-media-box" id="lightbox-content"></div>
+        <button class="lb-nav lb-next" onclick="changeLightbox(1)">❯</button>
+    </div>
+
+    <footer style="padding: 60px; text-align: center; background: var(--secondary); color: white;">
+        <p style="opacity: 0.6; font-size: 14px;">© 2025 Ebco Heartware Rewards Program. Built for the Offline
+            Experience.</p>
+    </footer>
+
+    <script>
+        /* --- MEDIA DATA --- */
+        const mediaItems = [
+            { type: 'video', url: 'media/videos/Heartware Video 1.mp4' },
+            { type: 'video', url: 'media/videos/Heartware Video 3.mp4' },
+            { type: 'image', url: 'media/images/banner/App Banner-02 (1).jpg' },
+            { type: 'image', url: 'media/images/banner/App Banner-03 (3).jpg' },
+            { type: 'image', url: 'media/images/banner/banner_1200x800px Eng 01.jpg' },
+            /* { type: 'video', url: 'https://www.w3schools.com/html/mov_bbb.mp4' }, */
+            { type: 'image', url: 'media/images/banner/banner_1200x800px Eng 02.jpg' },
+            { type: 'image', url: 'media/images/banner/banner_1200x800px Eng 03.jpg' },
+            { type: 'image', url: 'media/images/banner/banner_1200x800px Eng 04.jpg' },
+            { type: 'image', url: 'media/images/banner/banner_1200x800px Eng 05.jpg' }
+        ];
+
+        /* --- HERO CAROUSEL --- */
+        let heroIdx = 0;
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        setInterval(() => {
+            heroSlides[heroIdx].classList.remove('active');
+            heroIdx = (heroIdx + 1) % heroSlides.length;
+            heroSlides[heroIdx].classList.add('active');
+        }, 6000);
+
+        /* --- GALLERY INJECTION --- */
+        const galleryContainer = document.getElementById('gallery-container');
+        mediaItems.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'gallery-item reveal';
+            div.onclick = () => openLightbox(index);
+            if (item.type === 'video') {
+                /* div.innerHTML = `<video muted><source src="${item.url}"></video><div style="position:absolute; bottom:10px; left:10px; background:var(--primary); color:white; font-size:10px; padding:3px 8px; border-radius:3px;">&gt;</div>`; */
+                div.innerHTML = `<video muted><source src="${item.url}"></video><div class="play-overlay"><div class="play-triangle"></div></div>`;
+            } else {
+                div.innerHTML = `<img src="${item.url}" alt="Work">`;
+            }
+            galleryContainer.appendChild(div);
+        });
+
+        /* --- LIGHTBOX LOGIC --- */
+        let currentLightboxIndex = 0;
+        const lightbox = document.getElementById('lightbox');
+        const lbContent = document.getElementById('lightbox-content');
+
+        function openLightbox(index) {
+            currentLightboxIndex = index;
+            updateLightbox();
+            lightbox.classList.add('active');
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            lbContent.innerHTML = '';
+
+            document.getElementById('lightbox').classList.remove('active');
+            // Ensure arrows are visible again for the gallery
+            document.querySelectorAll('.lb-nav').forEach(nav => nav.style.display = 'block');
+        }
+
+        function changeLightbox(dir) {
+            currentLightboxIndex = (currentLightboxIndex + dir + mediaItems.length) % mediaItems.length;
+            updateLightbox();
+        }
+
+        function updateLightbox() {
+            const item = mediaItems[currentLightboxIndex];
+            lbContent.innerHTML = '';
+            if (item.type === 'video') {
+                lbContent.innerHTML = `<video controls autoplay style="width:100%"><source src="${item.url}"></video>`;
+            } else {
+                lbContent.innerHTML = `<img src="${item.url}">`;
+            }
+        }
+
+        /* --- UTILS --- */
+        function animateCard(el) {
+            el.classList.remove('click-anim');
+            void el.offsetWidth;
+            el.classList.add('click-anim');
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(r => observer.observe(r));
+
+        function toggleAppMenu(event) {
+            // This stops the click from hitting the "window" and closing the menu immediately
+            event.stopPropagation();
+
+            const dropdown = document.getElementById('appDropdown');
+            const btn = document.getElementById('appMenuBtn');
+
+            // Toggle the "show" class
+            dropdown.classList.toggle('show');
+        }
+
+        // Close the menu if the user clicks anywhere else on the screen
+        window.onclick = function (event) {
+            const dropdown = document.getElementById('appDropdown');
+            if (dropdown && dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+            }
+        }
+
+        function showQR() {
+            const lightbox = document.getElementById('lightbox');
+            const lbContent = document.getElementById('lightbox-content');
+
+            // 1. Hide the Next/Prev arrows so it's not a carousel
+            lightbox.querySelectorAll('.lb-nav').forEach(nav => nav.style.display = 'none');
+
+            // 2. Put the QR image inside
+            lbContent.innerHTML = `
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://slurl.in/ebco_app_link" 
+             style="width:300px; height:300px; border:10px solid white; border-radius:10px;">
+    `;
+
+            // 3. Show the black 0.9 background
+            lightbox.classList.add('active');
+        }
+
+
+
+
+    </script>
+</body>
+
+</html>
