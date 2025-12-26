@@ -159,7 +159,7 @@
         }
 
         /* --- SECTION 3: GALLERY & LIGHTBOX --- */
-        .gallery-grid {
+        /*.gallery-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
             gap: 20px;
@@ -184,6 +184,106 @@
 
         .gallery-item:hover img {
             transform: scale(1.1);
+        } */
+
+        /* Increased height for a more "Full-Screen" feel */
+        .gallery-wrapper {
+            position: relative;
+            width: 100%;
+            height: 650px;
+            /* Increased from 450px */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            perspective: 1500px;
+            /* Deeper perspective for larger items */
+        }
+
+        .gallery-item {
+            position: absolute;
+            width: 800px;
+            /* Increased from 500px - Much wider */
+            height: 500px;
+            /* Increased from 300px - Much taller */
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            filter: blur(12px) brightness(0.4);
+            background: #000;
+            /* Black bars behind if image is a different ratio */
+        }
+
+        /* Fix for Cropping: Ensures video/image fits without losing edges */
+        .gallery-item img,
+        .gallery-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            /* Changed from 'cover' to prevent cropping */
+            background-color: #000;
+        }
+
+        /* Central Active Item - More prominent */
+        .gallery-item.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate3d(0, 0, 300px);
+            /* Bolder forward movement */
+            filter: blur(0) brightness(1);
+            z-index: 10;
+        }
+
+        /* Side items shifted further out to accommodate larger center */
+        .gallery-item.prev {
+            opacity: 0.6;
+            transform: translate3d(-550px, 0, -100px) rotateY(20deg) scale(0.7);
+            z-index: 5;
+        }
+
+        .gallery-item.next {
+            opacity: 0.6;
+            transform: translate3d(550px, 0, -100px) rotateY(-20deg) scale(0.7);
+            z-index: 5;
+        }
+
+        /* Navigation Buttons for the Carousel */
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .carousel-nav:hover {
+            background: var(--primary);
+            border-color: transparent;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-nav.prev-btn {
+            left: 5%;
+        }
+
+        .carousel-nav.next-btn {
+            right: 5%;
         }
 
         /* Container for the Play Icon */
@@ -438,7 +538,9 @@
                 <br>
                 <span style="color:#ed7424">Designed for <br>Contractors & Carpenters.</span>
             </h1>
-            <p style="font-size: 1.3rem; margin-bottom: 35px; color: rgba(255,255,255,0.9);">SCAN . EARN . REDEEM .
+            <p
+                style="font-size: 1.3rem; margin-bottom: 35px; color: rgba(255,255,255,0.9); word-spacing: 5px; font-weight: bold; letter-spacing: 5px;">
+                SCAN . EARN . REDEEM .
                 REPEAT</p>
             <div style="display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
                 <!-- <a href="https://slurl.in/ebco_app_link" class="btn-main">Install Mobile App</a> -->
@@ -461,7 +563,7 @@
         <div
             style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 60px; align-items: center;">
             <div class="reveal">
-                <span style="color:var(--primary); font-weight: 800; text-transform: uppercase;">Overview</span>
+                <!-- <span style="color:var(--primary); font-weight: 800; text-transform: uppercase;">Overview</span> -->
                 <h2 style="font-size: 2.8rem; margin-top: 10px;">ABOUT THE PROGRAM</h2>
                 <p class="about-paragraphs">
                     <span>Ebco Heartware is a Reward Program exclusively designed for contractors & carpenters
@@ -527,9 +629,22 @@
         </div>
     </section>
 
-    <section class="section" style="background: #f1f5f9;">
+    <!-- <section class="section" style="background: #f1f5f9;">
         <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 50px;">Heartware Highlights</h2>
         <div class="gallery-grid" id="gallery-container">
+        </div>
+    </section> -->
+
+    <section class="section" style="background: #0f172a;">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 50px; color: white;">HEARTWARE HIGHLIGHTS</h2>
+
+        <div class="gallery-wrapper" style="position: relative;">
+            <button class="carousel-nav prev-btn" onclick="moveCarousel(-1)">❮</button>
+            <button class="carousel-nav next-btn" onclick="moveCarousel(1)">❯</button>
+
+            <div id="gallery-container"
+                style="display: flex; align-items: center; justify-content: center; height: 450px; width: 100%;">
+            </div>
         </div>
     </section>
 
@@ -541,8 +656,7 @@
     </div>
 
     <footer style="padding: 60px; text-align: center; background: var(--secondary); color: white;">
-        <p style="opacity: 0.6; font-size: 14px;">© 2025 Ebco Heartware Rewards Program. Built for the Offline
-            Experience.</p>
+        <p style="opacity: 0.6; font-size: 14px;">© 2025 Ebco Heartware Rewards Program.</p>
     </footer>
 
     <script>
@@ -553,7 +667,6 @@
             { type: 'image', url: 'media/images/banner/App Banner-02 (1).jpg' },
             { type: 'image', url: 'media/images/banner/App Banner-03 (3).jpg' },
             { type: 'image', url: 'media/images/banner/banner_1200x800px Eng 01.jpg' },
-            /* { type: 'video', url: 'https://www.w3schools.com/html/mov_bbb.mp4' }, */
             { type: 'image', url: 'media/images/banner/banner_1200x800px Eng 02.jpg' },
             { type: 'image', url: 'media/images/banner/banner_1200x800px Eng 03.jpg' },
             { type: 'image', url: 'media/images/banner/banner_1200x800px Eng 04.jpg' },
@@ -569,20 +682,57 @@
             heroSlides[heroIdx].classList.add('active');
         }, 6000);
 
-        /* --- GALLERY INJECTION --- */
+        /* --- THEATRICAL CAROUSEL LOGIC --- */
+        let currentIndex = 0;
+        let carouselTimer;
         const galleryContainer = document.getElementById('gallery-container');
+
+        // Inject Items
         mediaItems.forEach((item, index) => {
             const div = document.createElement('div');
-            div.className = 'gallery-item reveal';
+            div.className = 'gallery-item'; // Removed 'reveal' to prevent conflict with carousel
             div.onclick = () => openLightbox(index);
+
             if (item.type === 'video') {
-                /* div.innerHTML = `<video muted><source src="${item.url}"></video><div style="position:absolute; bottom:10px; left:10px; background:var(--primary); color:white; font-size:10px; padding:3px 8px; border-radius:3px;">&gt;</div>`; */
-                div.innerHTML = `<video muted><source src="${item.url}"></video><div class="play-overlay"><div class="play-triangle"></div></div>`;
+                div.innerHTML = `<video muted loop autoplay playsinline><source src="${item.url}"></video>
+                         <div class="play-overlay"><div class="play-triangle"></div></div>`;
             } else {
-                div.innerHTML = `<img src="${item.url}" alt="Work">`;
+                div.innerHTML = `<img src="${item.url}">`;
             }
             galleryContainer.appendChild(div);
         });
+
+        function updateCarousel() {
+            const items = document.querySelectorAll('.gallery-item');
+            const total = items.length;
+
+            items.forEach((item, index) => {
+                item.classList.remove('active', 'prev', 'next');
+                item.style.opacity = "0";
+
+                if (index === currentIndex) {
+                    item.classList.add('active');
+                    item.style.opacity = "1";
+                } else if (index === (currentIndex - 1 + total) % total) {
+                    item.classList.add('prev');
+                    item.style.opacity = "0.7";
+                } else if (index === (currentIndex + 1) % total) {
+                    item.classList.add('next');
+                    item.style.opacity = "0.7";
+                }
+            });
+        }
+
+        function startCarouselTimer() {
+            clearInterval(carouselTimer);
+            carouselTimer = setInterval(() => moveCarousel(1), 15000);
+        }
+
+        function moveCarousel(direction) {
+            currentIndex = (currentIndex + direction + mediaItems.length) % mediaItems.length;
+            updateCarousel();
+            startCarouselTimer();
+        }
 
         /* --- LIGHTBOX LOGIC --- */
         let currentLightboxIndex = 0;
@@ -591,6 +741,8 @@
 
         function openLightbox(index) {
             currentLightboxIndex = index;
+            // REVEAL ARROWS (in case they were hidden by showQR)
+            document.querySelectorAll('.lb-nav').forEach(nav => nav.style.display = 'block');
             updateLightbox();
             lightbox.classList.add('active');
         }
@@ -598,10 +750,6 @@
         function closeLightbox() {
             lightbox.classList.remove('active');
             lbContent.innerHTML = '';
-
-            document.getElementById('lightbox').classList.remove('active');
-            // Ensure arrows are visible again for the gallery
-            document.querySelectorAll('.lb-nav').forEach(nav => nav.style.display = 'block');
         }
 
         function changeLightbox(dir) {
@@ -619,57 +767,30 @@
             }
         }
 
-        /* --- UTILS --- */
-        function animateCard(el) {
-            el.classList.remove('click-anim');
-            void el.offsetWidth;
-            el.classList.add('click-anim');
+        /* --- APP MENU & QR --- */
+        function toggleAppMenu(event) {
+            event.stopPropagation();
+            document.getElementById('appDropdown').classList.toggle('show');
         }
 
+        window.onclick = () => document.getElementById('appDropdown').classList.remove('show');
+
+        function showQR() {
+            // Hide arrows for clean QR view
+            document.querySelectorAll('.lb-nav').forEach(nav => nav.style.display = 'none');
+            lbContent.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://slurl.in/ebco_app_link" 
+                                 style="width:300px; height:300px; border:10px solid white; border-radius:15px;">`;
+            lightbox.classList.add('active');
+        }
+
+        /* --- INITIALIZE --- */
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(r => observer.observe(r));
 
-        function toggleAppMenu(event) {
-            // This stops the click from hitting the "window" and closing the menu immediately
-            event.stopPropagation();
-
-            const dropdown = document.getElementById('appDropdown');
-            const btn = document.getElementById('appMenuBtn');
-
-            // Toggle the "show" class
-            dropdown.classList.toggle('show');
-        }
-
-        // Close the menu if the user clicks anywhere else on the screen
-        window.onclick = function (event) {
-            const dropdown = document.getElementById('appDropdown');
-            if (dropdown && dropdown.classList.contains('show')) {
-                dropdown.classList.remove('show');
-            }
-        }
-
-        function showQR() {
-            const lightbox = document.getElementById('lightbox');
-            const lbContent = document.getElementById('lightbox-content');
-
-            // 1. Hide the Next/Prev arrows so it's not a carousel
-            lightbox.querySelectorAll('.lb-nav').forEach(nav => nav.style.display = 'none');
-
-            // 2. Put the QR image inside
-            lbContent.innerHTML = `
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://slurl.in/ebco_app_link" 
-             style="width:300px; height:300px; border:10px solid white; border-radius:10px;">
-    `;
-
-            // 3. Show the black 0.9 background
-            lightbox.classList.add('active');
-        }
-
-
-
-
+        updateCarousel();
+        startCarouselTimer();
     </script>
 </body>
 
