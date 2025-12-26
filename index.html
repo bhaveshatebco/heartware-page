@@ -694,7 +694,7 @@
             div.onclick = () => openLightbox(index);
 
             if (item.type === 'video') {
-                div.innerHTML = `<video muted loop autoplay playsinline><source src="${item.url}"></video>
+                div.innerHTML = `<video muted loop playsinline><source src="${item.url}"></video>
                          <div class="play-overlay"><div class="play-triangle"></div></div>`;
             } else {
                 div.innerHTML = `<img src="${item.url}">`;
@@ -761,7 +761,7 @@
             const item = mediaItems[currentLightboxIndex];
             lbContent.innerHTML = '';
             if (item.type === 'video') {
-                lbContent.innerHTML = `<video controls autoplay style="width:100%"><source src="${item.url}"></video>`;
+                lbContent.innerHTML = `<video controls style="width:100%"><source src="${item.url}"></video>`;
             } else {
                 lbContent.innerHTML = `<img src="${item.url}">`;
             }
